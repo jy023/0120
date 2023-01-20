@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>글상세페이지</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    ul,
+    li {
+      list-style: none;
+    }
+
+    .write {
+      display: flex;
+      justify-content: center;
+    }
+
+    .write-wrap {
+      flex: 0 1 400px;
+    }
+
+    .write-con {
+      box-shadow: 1px 1px 10px #555555;
+      box-sizing: border-box;
+      padding: 10px;
+    }
+
+    .write-con h2 {
+      text-align: left;
+      padding: 30px 20px;
+      ox-sizing: border-box;
+      background-color: #0091DB;
+      color: #ffffff;
+    }
+
+    .write-con ul {}
+
+    .write-con ul li {
+      padding: 10px 10px;
+      box-sizing: border-box;
+    }
+
+    .write-con ul li.s1 {
+      display: flex;
+      justify-content: space-between;
+      gap: 2px;
+    }
+
+    .write-con ul li span {
+      flex: 1;
+      font-size: 12px;
+    }
+
+    .write-con ul li.s1 input {
+      flex: 3;
+      padding: 5px 10px;
+      box-sizing: border-box;
+      border: 1px solid #cccccc;
+    }
+
+    .write-con input[type=submit] {
+      background-color: #0000ff;
+      color: #ffffff;
+      width: 100%;
+      border: 0;
+      padding: 10px 20px;
+      box-sizing: border-box;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    input[type=submit]:hover {
+
+      background-color: #0091DB;
+      color: #eeeeee;
+
+    }
+
+    textarea {
+      width: 100%;
+      resize: none;
+    }
+
+    .reply-con {
+      padding: 10px ;
+      box-sizing: border-box;
+        box-shadow: 1px 1px 10px #555555;
+      box-sizing: border-box;
+    }
+
+    .reply-con h2 {
+      text-align: left;
+      padding: 30px 20px;
+      box-sizing: border-box;
+      background-color: #0091DB;
+      color: #ffffff;
+    }
+
+
+    .reply-con ul li.class2 {
+      display: flex;
+      justify-content: space-between;
+      gap: 5px;
+    }
+
+    .reply-con input {
+      flex: 1
+    }
+
+    .reply-con input[type=submit] {
+      background-color: #0000ff;
+      color: #ffffff;
+      border: 0;
+      padding: 10px 20px;
+      box-sizing: border-box;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .left-menu{
+      background-color: #ffffff;
+      position: fixed;
+      left: 0;
+      top:50%;
+      transform: translateY(-50%);
+      padding:5px;
+
+    }
+    .left-menu ul{
+    display: flex;
+    flex-direction: column;
+     gap:5px;
+    }
+     .left-menu ul li {
+      padding:5px 10px;
+      color:#eeeeee;
+     cursor:pointer;
+         background-color: #0091DB;
+         transition:all 0.3s;
+    }
+        .left-menu ul li:hover {
+
+          color:#ffffff;
+         background-color: #b3188d;
+    }
+      .left-menu ul li a{
+      color:inherit;
+      text-decoration:none;
+
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="left-menu">
+  <ul>
+    <li><a href="/">HOME</a></li>
+    <li><a href="/board/write">WRITE</a></li>
+    <li><a href="/board/boardList">BLIST</a></li>
+    <li><a href="#">LIST</a></li>
+    <li><a href="#">LIST</a></li>
+  </ul>
+</div>
+
+  <div class="write">
+    <!-- form -->
+    <div class="write-wrap">
+      <div class="write-con">
+        <h2>글상세보기</h2>
+        <ul>
+          <li class="s1"><span>제목</span> <span class="s2" th:text="${board.title}"></span></li>
+          <li class="s1"><span>내용</span> <span class="s2" th:text="${board.content}"></span></li>
+          <li class="s1"><span>글작성자</span><span class="s2" th:text="${board.writer}"></span></li>
+          <li class="s1"><span>글비빌번호</span><span class="s2" th:text="${board.boardPw}"></span></li>
+          <li class="s1"><a th:href="@{/board/write}">글작성</a>
+            <a th:href="@{/board/boardList}">글목록</a></li>
+        </ul>
+        </form>
+      </div>
+      <div class="reply-con">
+
+        <div class="reply-write">
+          <!-- 덧글 작성 -->
+          <h2>Reply Write</h2>
+          <form th:action="@{/reply/replyWrite}" method="POST">
+            <input type="hidden" readonly  name="baordId"  th:value="${board.id}">
+            <ul>
+              <li><label for="replyWriter">작성자</label> <input type="text" name="replyWriter" id="replyWriter"></li>
+              <li><label for="replyContent">덧글내용</label> <br>
+                <textarea name="replyContent" id="replyContent" cols="30" rows="10"></textarea></li>
+              <li><input type="submit" value="덧글작성"></li>
+            </ul>
+          </form>
+        </div>
+        <div class="reply-list">
+          <!-- 덧글리스트 -->
+          <table>
+            <tr>
+              <th>댓글번호</th>
+              <th>작성자</th>
+              <th>내용</th>
+              <th>작성시간</th>
+            </tr>
+            <tr th:each="reply: ${replyDtoList}">
+              <td th:text="${reply.id}"></td>
+              <td th:text="${reply.replyWriter}"></td>
+              <td th:text="${reply.replyContent}"></td>
+              <td th:text="${reply.CreateTime}"></td>
+
+            </tr>
+
+          </table>
+
+
+
+
+        </div>
+
+      </div>
+    </div>
+
+
+  </div>
+
+</body>
+
+</html>
